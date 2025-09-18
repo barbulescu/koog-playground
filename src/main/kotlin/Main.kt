@@ -1,7 +1,8 @@
 import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.core.tools.ToolRegistry
+import ai.koog.agents.ext.tool.SayToUser
 import ai.koog.prompt.executor.clients.openai.OpenAIClientSettings
 import ai.koog.prompt.executor.clients.openai.OpenAILLMClient
-import ai.koog.prompt.executor.clients.openai.OpenAIModels.Chat.GPT4_1
 import ai.koog.prompt.executor.clients.openai.OpenAIModels.Chat.GPT4o
 import ai.koog.prompt.executor.llms.SingleLLMPromptExecutor
 import kotlinx.coroutines.runBlocking
@@ -16,11 +17,18 @@ fun main() {
     val agent = AIAgent(
         executor = SingleLLMPromptExecutor(OpenAILLMClient(apiKey = apiKey, settings = azureOpenAIClientSettings)),
         systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
-        llmModel = GPT4o
+        llmModel = GPT4o,
+        toolRegistry = ToolRegistry {
+            tool(SayToUser)
+        }
     )
 
     runBlocking {
-        val output = agent.run("I want to register my company - what steps should I take?")
-        println(output)
+        val companyOutput = agent.run("I want to register my company - what steps should I take?")
+        println(companyOutput)
+
+        val documentsOutput = agent.run("What documents I need to open a salary account in Switzerland?")
+        println(documentsOutput)
     }
 }
+
