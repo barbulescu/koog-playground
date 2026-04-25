@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "2.2.20"
+    kotlin("jvm") version "2.3.21"
 }
 
 group = "org.example"
@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    implementation("ai.koog:koog-agents-jvm:0.4.2")
+    implementation("ai.koog:koog-agents-jvm:0.8.0")
     testImplementation(kotlin("test"))
 }
 
@@ -18,5 +18,5 @@ tasks.test {
     useJUnitPlatform()
 }
 kotlin {
-    jvmToolchain(24)
+    jvmToolchain(25)
 }
