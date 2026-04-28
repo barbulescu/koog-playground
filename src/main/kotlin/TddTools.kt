@@ -2,11 +2,10 @@ import ai.koog.agents.core.tools.Tool
 import ai.koog.agents.core.tools.ToolDescriptor
 import ai.koog.agents.core.tools.ToolParameterDescriptor
 import ai.koog.agents.core.tools.ToolParameterType
-import ai.koog.agents.core.tools.ToolResult
 import kotlinx.serialization.Serializable
 
 // ---------------------------------------------------------------------------
-// Input / Output shapes (serialisable so Koog can pass them through the LLM)
+// Input / Output shapes (serializable so Koog can pass them through the LLM)
 // ---------------------------------------------------------------------------
 
 @Serializable
@@ -64,9 +63,10 @@ data class RefactorCodeOutput(
 
 class WriteFailingTestTool(
     private val testingAgent: TestingAgent,
-) : Tool<WriteFailingTestInput, WriteFailingTestOutput>() {
-
-    override val descriptor = ToolDescriptor(
+) : Tool<WriteFailingTestInput, WriteFailingTestOutput>(
+    WriteFailingTestInput.serializer(),
+    WriteFailingTestOutput.serializer(),
+    ToolDescriptor(
         name = "write_failing_test",
         description = """
             RED phase of TDD.
@@ -83,6 +83,8 @@ class WriteFailingTestTool(
             ToolParameterDescriptor("language", "Target programming language (default Kotlin)", ToolParameterType.String),
         ),
     )
+) {
+
 
     override suspend fun execute(input: WriteFailingTestInput): WriteFailingTestOutput {
         val result: RedPhaseResult = testingAgent.writeFailingTest(
@@ -106,9 +108,10 @@ class WriteFailingTestTool(
 
 class WriteImplementationTool(
     private val codingAgent: CodingAgent,
-) : Tool<WriteImplementationInput, WriteImplementationOutput>() {
-
-    override val descriptor = ToolDescriptor(
+) : Tool<WriteImplementationInput, WriteImplementationOutput>(
+    WriteImplementationInput.serializer(),
+    WriteImplementationOutput.serializer(),
+    ToolDescriptor(
         name = "write_implementation",
         description = """
             GREEN phase of TDD.
@@ -125,6 +128,8 @@ class WriteImplementationTool(
             ToolParameterDescriptor("language", "Target programming language (default Kotlin)", ToolParameterType.String),
         ),
     )
+) {
+
 
     override suspend fun execute(input: WriteImplementationInput): WriteImplementationOutput {
         val result: GreenPhaseResult = codingAgent.writeImplementation(
@@ -148,9 +153,10 @@ class WriteImplementationTool(
 
 class RefactorCodeTool(
     private val refactoringAgent: RefactoringAgent,
-) : Tool<RefactorCodeInput, RefactorCodeOutput>() {
-
-    override val descriptor = ToolDescriptor(
+) : Tool<RefactorCodeInput, RefactorCodeOutput>(
+    RefactorCodeInput.serializer(),
+    RefactorCodeOutput.serializer(),
+    ToolDescriptor(
         name = "refactor_code",
         description = """
             REFACTOR phase of TDD.
@@ -168,6 +174,8 @@ class RefactorCodeTool(
             ToolParameterDescriptor("language", "Target programming language (default Kotlin)", ToolParameterType.String),
         ),
     )
+) {
+
 
     override suspend fun execute(input: RefactorCodeInput): RefactorCodeOutput {
         val result: RefactorPhaseResult = refactoringAgent.refactor(
